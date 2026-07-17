@@ -1,0 +1,13 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Xəta";
+}
+<div class="panel mt-24" style="max-width:640px;margin:48px auto;">
+    <h1>Nəsə səhv getdi</h1>
+    <p class="muted">Sorğunuz emal edilərkən xəta baş verdi.</p>
+    @if (Model.ShowRequestId)
+    {
+        <p class="muted">Request ID: <code>@Model.RequestId</code></p>
+    }
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Ana səhifəyə qayıt</a>
+</div>

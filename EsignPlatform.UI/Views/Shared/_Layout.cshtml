@@ -1,0 +1,80 @@
+﻿@using EsignPlatform.DAL.Data
+@using EsignPlatform.DAL.Entities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@{
+    var user = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
+    var isAdmin = user != null && await UserManager.IsInRoleAsync(user, DbInitializer.AdminRole);
+}
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · SmartContract.az</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="nav">
+        <div class="container nav-inner">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <span class="logo">◆</span>
+                SmartContract<span class="dot">.az</span>
+            </a>
+            <nav class="nav-links">
+                <a asp-controller="Home" asp-action="Index">Ana səhifə</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <a asp-controller="Templates" asp-action="Index">Şablonlar</a>
+                    <a asp-controller="Contracts" asp-action="Index">Müqavilələrim</a>
+                    @if (isAdmin)
+                    {
+                        <a asp-controller="Admin" asp-action="Templates">Admin</a>
+                    }
+                }
+            </nav>
+            <div class="nav-spacer"></div>
+            <div class="nav-user">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <span class="who">@user?.DisplayName</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-ghost btn-sm">Çıxış</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-ghost btn-sm" asp-controller="Account" asp-action="Login">Daxil ol</a>
+                    <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Register">Qeydiyyat</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-bottom:48px;">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mt-24">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-error mt-24">@TempData["Error"]</div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <span>© @DateTime.Now.Year SmartContract.az — Elektron müqavilə platforması</span>
+            <span>Azərbaycanda rəqəmsal müqavilə həlli</span>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

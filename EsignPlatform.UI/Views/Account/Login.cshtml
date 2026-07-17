@@ -1,0 +1,49 @@
+﻿@using EsignPlatform.BLL.DTOs.Account
+@model LoginDto
+@{
+    ViewData["Title"] = "Daxil ol";
+}
+<div class="auth-wrap">
+    <div class="brand">
+        <span class="logo">◆</span> SmartContract<span class="dot">.az</span>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Daxil ol</h2>
+            <div class="sub">Hesabınıza daxil olun.</div>
+        </div>
+
+        <form asp-action="Login" method="post">
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" placeholder="email@example.az" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group checkbox-row">
+                <input asp-for="RememberMe" type="checkbox" />
+                <label asp-for="RememberMe"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Daxil ol</button>
+        </form>
+
+        <p class="muted mt-24" style="text-align:center;">
+            Hesabınız yoxdur? <a asp-action="Register">Qeydiyyatdan keçin</a>
+        </p>
+        <p class="field-hint" style="text-align:center;">
+            Demo admin: <b>admin@smartcontract.az</b> / <b>Admin123!</b>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,47 @@
+﻿@using EsignPlatform.BLL.DTOs.Template
+@using EsignPlatform.UI.Helpers
+@model TemplateDetailDto
+@{
+    ViewData["Title"] = Model.Name;
+}
+<div class="page-head">
+    <div>
+        <span class="tag-cat">@DisplayHelper.CategoryName(Model.Category)</span>
+        <h1 style="margin-top:8px;">@DisplayHelper.CategoryIcon(Model.Category) @Model.Name</h1>
+        <p class="muted mb-0">@Model.Description</p>
+    </div>
+    <a class="btn btn-primary" asp-controller="Contracts" asp-action="Create" asp-route-templateId="@Model.Id">Bu şablonla yarat →</a>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Şablon sahələri</h2>
+        <div class="sub">Müqavilə yaradılarkən doldurulacaq dinamik sahələr.</div>
+    </div>
+
+    @if (Model.Fields.Any())
+    {
+        <div class="table-wrap" style="box-shadow:none;">
+            <table class="tbl">
+                <thead>
+                    <tr><th>Sahə</th><th>Açar (key)</th><th>Növ</th><th>Vacib</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var f in Model.Fields)
+                    {
+                        <tr>
+                            <td><b>@f.Label</b></td>
+                            <td><code>@f.Key</code></td>
+                            <td>@f.Type</td>
+                            <td>@(f.Required ? "Bəli" : "Xeyr")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="muted">Bu şablonda dinamik sahə yoxdur.</p>
+    }
+</div>

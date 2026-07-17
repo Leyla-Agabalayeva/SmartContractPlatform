@@ -1,0 +1,47 @@
+﻿@using EsignPlatform.BLL.DTOs.Template
+@using EsignPlatform.UI.Helpers
+@model List<TemplateListDto>
+@{
+    ViewData["Title"] = "Admin · Şablonlar";
+}
+<div class="page-head">
+    <div>
+        <h1>Şablon idarəetməsi</h1>
+        <p class="muted mb-0">Şablonları aktiv / deaktiv edin.</p>
+    </div>
+</div>
+
+<div class="table-wrap">
+    <table class="tbl">
+        <thead>
+            <tr><th>Şablon</th><th>Kateqoriya</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Model)
+            {
+                <tr>
+                    <td><b>@t.Name</b><br /><span class="muted" style="font-size:.82rem;">@t.Description</span></td>
+                    <td>@DisplayHelper.CategoryIcon(t.Category) @DisplayHelper.CategoryName(t.Category)</td>
+                    <td>
+                        @if (t.IsActive)
+                        {
+                            <span class="pill pill-full">Aktiv</span>
+                        }
+                        else
+                        {
+                            <span class="pill pill-draft">Deaktiv</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="ToggleActive" asp-route-id="@t.Id" method="post" class="mb-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-ghost btn-sm">
+                                @(t.IsActive ? "Deaktiv et" : "Aktiv et")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

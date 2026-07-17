@@ -1,0 +1,52 @@
+﻿@using EsignPlatform.BLL.DTOs.Contract
+@using EsignPlatform.UI.Helpers
+@model List<ContractListDto>
+@{
+    ViewData["Title"] = "Müqavilələrim";
+}
+<div class="page-head">
+    <div>
+        <h1>Müqavilələrim</h1>
+        <p class="muted mb-0">Yaratdığınız və tərəf olduğunuz müqavilələr.</p>
+    </div>
+    <a class="btn btn-primary" asp-controller="Templates" asp-action="Index">+ Yeni müqavilə</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty">
+        <div class="big">📭</div>
+        <p>Hələ müqaviləniz yoxdur.</p>
+        <a class="btn btn-primary btn-sm" asp-controller="Templates" asp-action="Index">İlk müqaviləni yarat</a>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>Başlıq</th>
+                    <th>Şablon</th>
+                    <th>Status</th>
+                    <th>İmzalar</th>
+                    <th>Tarix</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td><b>@c.Title</b></td>
+                        <td class="muted">@c.TemplateName</td>
+                        <td><span class="@DisplayHelper.StatusPill(c.Status)">@DisplayHelper.StatusName(c.Status)</span></td>
+                        <td>@c.SignedCount / @c.PartiesCount</td>
+                        <td class="muted">@c.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                        <td><a class="btn btn-ghost btn-sm" asp-action="Details" asp-route-id="@c.Id">Bax</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

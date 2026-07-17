@@ -1,0 +1,28 @@
+﻿@using EsignPlatform.BLL.DTOs.Template
+@using EsignPlatform.UI.Helpers
+@model List<TemplateListDto>
+@{
+    ViewData["Title"] = "Şablonlar";
+}
+<div class="page-head">
+    <div>
+        <h1>Müqavilə şablonları</h1>
+        <p class="muted mb-0">Şablon seçin və müqavilə yaratmağa başlayın.</p>
+    </div>
+</div>
+
+<div class="grid grid-3">
+    @foreach (var t in Model)
+    {
+        <div class="card">
+            <div class="icon">@DisplayHelper.CategoryIcon(t.Category)</div>
+            <span class="cat">@DisplayHelper.CategoryName(t.Category)</span>
+            <h3>@t.Name</h3>
+            <p>@t.Description</p>
+            <div class="flex gap-8">
+                <a class="btn btn-primary btn-sm" asp-controller="Contracts" asp-action="Create" asp-route-templateId="@t.Id">Müqavilə yarat</a>
+                <a class="btn btn-ghost btn-sm" asp-action="Details" asp-route-id="@t.Id">Ətraflı</a>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,111 @@
+﻿@using EsignPlatform.BLL.DTOs.Contract
+@using EsignPlatform.DAL.Entities
+@using EsignPlatform.DAL.Enums
+@using EsignPlatform.UI.Helpers
+@using Microsoft.AspNetCore.Identity
+@model ContractDetailDto
+@inject UserManager<AppUser> UserManager
+@{
+    ViewData["Title"] = Model.Title;
+    var uid = UserManager.GetUserId(User);
+    var myParty = Model.Parties.FirstOrDefault(p => p.UserId == uid);
+    var canSign = myParty != null && !myParty.Signed
+                  && Model.Status != ContractStatus.FullySigned
+                  && Model.Status != ContractStatus.Rejected;
+    var canReject = myParty != null
+                  && (Model.Status == ContractStatus.Pending || Model.Status == ContractStatus.PartiallySigned);
+    var signedCount = Model.Parties.Count(p => p.Signed);
+    var total = Model.Parties.Count;
+    var pct = total == 0 ? 0 : (int)Math.Round(signedCount * 100.0 / total);
+}
+<div class="page-head">
+    <div>
+        <span class="tag-cat">@Model.TemplateName</span>
+        <h1 style="margin-top:8px;">@Model.Title</h1>
+        <div class="flex gap-12" style="align-items:center;margin-top:6px;">
+            <span class="@DisplayHelper.StatusPill(Model.Status)">@DisplayHelper.StatusName(Model.Status)</span>
+            <span class="muted">Yaradan: @Model.CreatedByName · @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+        </div>
+    </div>
+    <div class="flex gap-8">
+        @if (canSign)
+        {
+            <a class="btn btn-primary" asp-controller="Signing" asp-action="Sign" asp-route-id="@Model.Id">✍️ İmzala</a>
+        }
+        <a class="btn btn-ghost" asp-action="DownloadPdf" asp-route-id="@Model.Id">⬇ PDF</a>
+        @if (canReject)
+        {
+            <form asp-action="Reject" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Müqaviləni rədd etmək istədiyinizə əminsiniz?');" class="mb-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Rədd et</button>
+            </form>
+        }
+    </div>
+</div>
+
+<div class="grid grid-2" style="align-items:start;">
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Müqavilə məlumatları</h2>
+            <div class="sub">Doldurulmuş sahələr</div>
+        </div>
+        @if (Model.Fields.Any())
+        {
+            <div class="kv">
+                @foreach (var f in Model.Fields)
+                {
+                    var val = Model.FieldValues.TryGetValue(f.Key, out var v) ? v : "—";
+                    <div class="k">@f.Label</div>
+                    <div class="v">@(string.IsNullOrWhiteSpace(val) ? "—" : val)</div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="muted">Sahə yoxdur.</p>
+        }
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Tərəflər və imzalar</h2>
+            <div class="sub">@signedCount / @total imzalanıb</div>
+        </div>
+
+        <div class="sign-progress">
+            <div class="bar"><span style="width:@(pct)%"></span></div>
+            <span class="muted" style="font-size:.85rem;font-weight:600;">@pct%</span>
+        </div>
+
+        <div class="table-wrap" style="box-shadow:none;margin-top:14px;">
+            <table class="tbl">
+                <thead>
+                    <tr><th>Tərəf</th><th>Rol</th><th>İmza</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Parties)
+                    {
+                        <tr>
+                            <td>
+                                <b>@p.DisplayName</b><br />
+                                <span class="muted" style="font-size:.82rem;">@p.FinOrVoen</span>
+                            </td>
+                            <td>@DisplayHelper.RoleName(p.Role)</td>
+                            <td>
+                                @if (p.Signed)
+                                {
+                                    <span class="pill pill-full">İmzalandı</span>
+                                    <div class="muted" style="font-size:.78rem;margin-top:4px;">@p.SignedAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+                                }
+                                else
+                                {
+                                    <span class="pill pill-pending">Gözləyir</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

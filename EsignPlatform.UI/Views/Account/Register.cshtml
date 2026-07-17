@@ -1,0 +1,75 @@
+﻿@using EsignPlatform.BLL.DTOs.Account
+@using EsignPlatform.DAL.Enums
+@model RegisterDto
+@{
+    ViewData["Title"] = "Qeydiyyat";
+}
+<div class="auth-wrap">
+    <div class="brand">
+        <span class="logo">◆</span> SmartContract<span class="dot">.az</span>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Qeydiyyat</h2>
+            <div class="sub">Fiziki və ya hüquqi şəxs kimi hesab yaradın.</div>
+        </div>
+
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+            <div class="form-group">
+                <label asp-for="UserType"></label>
+                <select asp-for="UserType" asp-items="Html.GetEnumSelectList<UserType>()"></select>
+                <div class="field-hint">Fiziki şəxs → FIN, hüquqi şəxs → VÖEN.</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="FinOrVoen"></label>
+                    <input asp-for="FinOrVoen" class="form-control" placeholder="FIN / VÖEN" />
+                    <span asp-validation-for="FinOrVoen" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DisplayName"></label>
+                    <input asp-for="DisplayName" class="form-control" placeholder="Ad Soyad / Şirkət" />
+                    <span asp-validation-for="DisplayName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" placeholder="email@example.az" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="+994..." />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Hesab yarat</button>
+        </form>
+
+        <p class="muted mt-24" style="text-align:center;">
+            Artıq hesabınız var? <a asp-action="Login">Daxil olun</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,96 @@
+﻿@using EsignPlatform.BLL.DTOs.Contract
+@using EsignPlatform.DAL.Enums
+@model CreateContractDto
+@{
+    ViewData["Title"] = "Müqavilə yarat";
+}
+<div class="page-head">
+    <div>
+        <span class="tag-cat">@Model.TemplateName</span>
+        <h1 style="margin-top:8px;">Yeni müqavilə</h1>
+        <p class="muted mb-0">Sahələri doldurun və qarşı tərəfi əlavə edin.</p>
+    </div>
+</div>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="TemplateId" />
+    <div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-0" style="margin-bottom:18px;"></div>
+
+    <div class="grid grid-2" style="align-items:start;">
+        <!-- Müqavilə məlumatları -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Müqavilə məlumatları</h2>
+                <div class="sub">@Model.TemplateName sahələri</div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Title"></label>
+                <input asp-for="Title" class="form-control" placeholder="Məs: Bakı ş. mənzil kirayəsi" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            @for (int i = 0; i < Model.Fields.Count; i++)
+            {
+                var f = Model.Fields[i];
+                var name = $"FieldValues[{f.Key}]";
+                <div class="form-group">
+                    <label>@f.Label @(f.Required ? "*" : "")</label>
+                    @if (f.Type == "textarea")
+                    {
+                        <textarea name="@name" class="form-control" @(f.Required ? "required" : "")></textarea>
+                    }
+                    else if (f.Type == "number")
+                    {
+                        <input type="number" step="any" name="@name" class="form-control" @(f.Required ? "required" : "") />
+                    }
+                    else if (f.Type == "date")
+                    {
+                        <input type="date" name="@name" class="form-control" @(f.Required ? "required" : "") />
+                    }
+                    else
+                    {
+                        <input type="text" name="@name" class="form-control" @(f.Required ? "required" : "") />
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Tərəflər -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Tərəflər</h2>
+                <div class="sub">Siz və qarşı tərəf</div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CreatorRole">Sizin rolunuz</label>
+                <select asp-for="CreatorRole" asp-items="Html.GetEnumSelectList<PartyRole>()"></select>
+            </div>
+
+            <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;" />
+
+            <div class="form-group">
+                <label asp-for="CounterpartyName"></label>
+                <input asp-for="CounterpartyName" class="form-control" placeholder="Qarşı tərəfin adı / şirkət" />
+                <span asp-validation-for="CounterpartyName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CounterpartyFinOrVoen"></label>
+                <input asp-for="CounterpartyFinOrVoen" class="form-control" placeholder="FIN / VÖEN" />
+                <span asp-validation-for="CounterpartyFinOrVoen" class="text-danger"></span>
+                <div class="field-hint">Qarşı tərəf sistemdə qeydiyyatdadırsa, avtomatik bağlanacaq.</div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CounterpartyRole">Qarşı tərəfin rolu</label>
+                <select asp-for="CounterpartyRole" asp-items="Html.GetEnumSelectList<PartyRole>()"></select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-24">Müqaviləni yarat</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

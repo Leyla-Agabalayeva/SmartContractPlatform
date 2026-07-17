@@ -1,0 +1,68 @@
+﻿@using EsignPlatform.BLL.DTOs.Template
+@using EsignPlatform.UI.Helpers
+@model List<TemplateListDto>
+@{
+    ViewData["Title"] = "Ana səhifə";
+}
+
+<section class="hero">
+    <span class="hero-eyebrow">⚡ SaaS · Elektron imzalama platforması</span>
+    <h1>Müqavilələri <span class="grad-text">rəqəmsal imzalayın</span><br />dəqiqələr içində</h1>
+    <p class="lead">
+        Hazır şablonlar əsasında müqavilə yaradın, qarşı tərəflə paylaşın və
+        OTP ilə təhlükəsiz şəkildə imzalayın. Fiziki və hüquqi şəxslər üçün tam
+        rəqəmsal müqavilə dövriyyəsi.
+    </p>
+    <div class="hero-actions">
+        <a class="btn btn-primary" asp-controller="Templates" asp-action="Index">Müqavilə yarat →</a>
+        <a class="btn btn-ghost" asp-controller="Account" asp-action="Register">Qeydiyyatdan keç</a>
+    </div>
+    <div class="hero-stats">
+        <div class="stat"><div class="num">4</div><div class="lbl">hazır şablon</div></div>
+        <div class="stat"><div class="num">OTP</div><div class="lbl">SMS təsdiqi</div></div>
+        <div class="stat"><div class="num">PDF</div><div class="lbl">audit izi ilə</div></div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <h2>Necə işləyir</h2>
+        <p>Dörd sadə addımda tam imzalanmış müqavilə.</p>
+    </div>
+    <div class="grid grid-3">
+        <div class="card">
+            <div class="icon">📋</div>
+            <h3>1. Şablon seç</h3>
+            <p>Kirayə, xidmət, satış və ya borc müqaviləsi şablonlarından birini seçin.</p>
+        </div>
+        <div class="card">
+            <div class="icon">✍️</div>
+            <h3>2. Doldur & paylaş</h3>
+            <p>Dinamik sahələri doldurun, qarşı tərəfin FIN / VÖEN-ini əlavə edin.</p>
+        </div>
+        <div class="card">
+            <div class="icon">🔐</div>
+            <h3>3. OTP ilə imzala</h3>
+            <p>Hər tərəf SMS OTP kodu ilə müqaviləni təhlükəsiz imzalayır.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <h2>Mövcud şablonlar</h2>
+        <p>Sistemdə hazır olan müqavilə növləri.</p>
+    </div>
+    <div class="grid grid-3">
+        @foreach (var t in Model)
+        {
+            <div class="card">
+                <div class="icon">@DisplayHelper.CategoryIcon(t.Category)</div>
+                <span class="cat">@DisplayHelper.CategoryName(t.Category)</span>
+                <h3>@t.Name</h3>
+                <p>@t.Description</p>
+                <a class="btn btn-ghost btn-sm" asp-controller="Templates" asp-action="Details" asp-route-id="@t.Id">Ətraflı bax</a>
+            </div>
+        }
+    </div>
+</section>

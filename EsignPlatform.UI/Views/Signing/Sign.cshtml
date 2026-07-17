@@ -1,0 +1,56 @@
+﻿@using EsignPlatform.BLL.DTOs.Contract
+@using EsignPlatform.BLL.DTOs.Signature
+@model VerifyOtpDto
+@{
+    ViewData["Title"] = "İmzalama";
+    var contract = ViewBag.Contract as ContractDetailDto;
+    var demoOtp = TempData["DemoOtp"] as string;
+}
+<div class="page-head">
+    <div>
+        <h1>Müqaviləni imzala</h1>
+        <p class="muted mb-0">@contract?.Title</p>
+    </div>
+    <a class="btn btn-ghost" asp-controller="Contracts" asp-action="Details" asp-route-id="@Model.ContractId">← Geri</a>
+</div>
+
+<div class="panel" style="max-width:560px;">
+    <div class="panel-header">
+        <h2>OTP ilə imzalama</h2>
+        <div class="sub">İki addımda təhlükəsiz elektron imza.</div>
+    </div>
+
+    @if (string.IsNullOrEmpty(demoOtp))
+    {
+        <p class="muted">Telefon nömrənizə OTP kodu göndəriləcək. Kod 5 dəqiqə ərzində etibarlıdır.</p>
+        <form asp-action="StartOtp" asp-route-id="@Model.ContractId" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary btn-block">📩 OTP kodu göndər</button>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <div style="font-size:.85rem;margin-bottom:6px;">Demo rejimi — real SMS yoxdur. Kodunuz:</div>
+            <div class="otp-box">@demoOtp</div>
+        </div>
+        <form asp-action="VerifyOtp" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ContractId" />
+            <div class="form-group">
+                <label asp-for="Code"></label>
+                <input asp-for="Code" class="form-control" placeholder="6 rəqəmli kod" autocomplete="off" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">✍️ Təsdiqlə və imzala</button>
+        </form>
+        <form asp-action="StartOtp" asp-route-id="@Model.ContractId" method="post" style="margin-top:10px;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-ghost btn-block btn-sm">Kodu yenidən göndər</button>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
